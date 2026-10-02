@@ -37,7 +37,7 @@ published = (table1[(table1.publication_month == MONTH) & (table1.reference_mont
              .set_index(["group", "measure"])["value"])
 print(f"Loaded Silver for {MONTH}: {len(day_time):,} day-time rows, {len(published)} published Table 1 values")
 
-BANK_HOLIDAYS = [pd.Timestamp("2026-08-31")]  # Summer Bank Holiday, England
+BANK_HOLIDAYS = [pd.Timestamp("2026-08-31")]  # I treat 31 Aug (Summer Bank Holiday, England) as non-working; the gate checks this against Table 1
 
 dates = pd.date_range(f"{MONTH}-01", periods=pd.Period(MONTH).days_in_month)
 weekdays_in_month = int((dates.dayofweek < 5).sum())
@@ -95,7 +95,7 @@ def check(source, label, published_value, rebuilt, kind="count", note=""):
 
 
 T1 = "Table 1"
-# coverage
+# I check coverage first: practices, patients and the two shares
 check(T1, "Open active practices", published[("Coverage", "Open active practices")], len(p_all))
 check(T1, "Count of practices included", published[("Coverage", "Count of practices included")], int(p_all.included.sum()))
 check(T1, "Practice coverage", published[("Coverage", "Practice coverage [1]")], p_all.included.mean(), "share")
@@ -106,14 +106,14 @@ check(T1, "Registered patients at included practices",
       published[("Coverage", "Registered patients at included practices")], reg_inc)
 check(T1, "Patient coverage", published[("Coverage", "Patient coverage")], reg_inc / reg_all, "share")
 check(T1, "Number of working weekdays", published_working, working_weekdays)
-# calls and outcomes
+# Then inbound calls and the four outcomes
 total = int(inbound.calls.sum())
 check(T1, "Total inbound calls", published[("Inbound calls", "Total Inbound Calls")], total)
 check(T1, "Rate of inbound calls per 1,000 registered patients at included practices",
       published[("Inbound calls", "Rate of inbound calls per 1,000 patients registered at practices included")],
       total / reg_inc * 1000, "rate")
 for code_, label, measure in [
-    ("CBT007", "Calls answered", "Calls answered [2]"),  # Table 1 uses CBT007 (see note above the gate)
+    ("CBT007", "Calls answered", "Calls answered [2]"),  # I use CBT007 here because Table 1 does (see the note above the gate)
     ("CBT002", "Calls ended during the IVR stage", next(m for g, m in published.index if m.startswith("Calls ended during the IVR"))),
     ("CBT005", "Calls resulting in a call back request", "Calls resulting in a call back request [2]"),
     ("CBT006", "Call backs made", "Call backs made"),
@@ -129,7 +129,7 @@ for code_, measure in [("CBT007", "Percentage of Inbound calls answered"),
     check(T1, key[1], published[key], nat[code_] / total, "share")
 check(T1, "Percentage of call backs made of those requested",
       published[("Calls dealt with", "Percentage of call backs made of those requested")], nat["CBT006"] / nat["CBT005"], "share")
-# wait times: any time, core hours, 8am-10am
+# Then wait times: any time, core hours and 8am-10am
 for group, frame in [("Call wait times (any time)", answered),
                      ("Call wait times (core hours)", core),
                      ("Call wait times (8am-10am)", early)]:
@@ -139,7 +139,7 @@ for group, frame in [("Call wait times (any time)", answered),
     key = next((g, m) for g, m in published.index if g == group and m.startswith("Percentage of calls answered after waiting under 2"))
     check(T1, f"{group}: % answered after waiting under 2 minutes", published[key],
           frame.loc[frame.under_2min, "calls"].sum() / frame.calls.sum(), "share")
-# Table 4b and the publication page
+# Then the figures outside Table 1: Table 4b and the publication page
 check("Table 4b", "Inbound calls, core hours (Mon-Fri 08:00-18:30)", t4b["inbound_core"],
       int(weekday_core[weekday_core.time_band.isin(CORE_BANDS)].calls.sum()),
       note="rebuilt excluding the bank holiday")
@@ -151,7 +151,7 @@ check("Table 4b", "Answered calls, 08:00-10:00", t4b["answered_8_10"], int(early
 check("Publication page", "Inbound calls Monday 08:00-10:00", 2_037_943, int(mon_8_10),
       note="rebuilt INCLUDING the bank holiday (31 Aug: 70,616)")
 check("Publication page", "Monday 08:00-10:00 as share of inbound", 0.075, mon_8_10 / total, "share")
-# Table 2: every date x band cell
+# Last, I compare every date x time-band cell of Table 2
 t2 = table2[table2.publication_month.eq(MONTH)]
 rebuilt_grid = (inbound.groupby(["date", "time_band"], observed=True)["calls"].sum().reset_index())
 rebuilt_grid = pd.concat([rebuilt_grid, inbound.groupby("date")["calls"].sum().reset_index().assign(time_band="TOTAL")])
@@ -179,6 +179,57 @@ for band, n in dur_counts.items():
                      "rebuilt": share, "difference": share - own,
                      "status": "PUBLISHED LABEL ERROR" if printed_as else "FAIL",
                      "note": f"true value is printed against '{printed_as}'" if printed_as else ""})
+
+# I hold three registered-patient lists; Bronze writes one folder per list month
+REG_LISTS = sorted(p.name for p in (BRONZE_DIR / "registered_patients").iterdir() if p.is_dir())
+assert {"2026-07", MONTH, "2026-09"} <= set(REG_LISTS), (
+    "I need the 1 July, 1 August and 1 September lists: run "
+    "`python src/pipeline/download_bronze.py registered`, then 01_bronze")
+
+
+def list_sizes(folder: str) -> tuple[pd.Timestamp, pd.Series]:
+    t = pd.read_parquet(BRONZE_DIR / "registered_patients" / folder / "gp-reg-pat-prac-all.parquet",
+                        columns=["CODE", "EXTRACT_DATE", "NUMBER_OF_PATIENTS"])
+    return pd.Timestamp(t.EXTRACT_DATE.iloc[0]), t.set_index("CODE").NUMBER_OF_PATIENTS.astype("int64")
+
+
+lists = {folder: list_sizes(folder) for folder in REG_LISTS}
+
+# 1. Which list are the published totals built on? I test the July and August call months.
+list_test = []
+for call_month in ["2026-07", MONTH]:
+    p_m = participation[participation.month.eq(call_month)].set_index("practice_code")
+    pub_m = (table1[(table1.publication_month == call_month) & (table1.reference_month == call_month)]
+             .set_index(["group", "measure"])["value"])
+    for folder, (extract_date, sizes) in lists.items():
+        matched = p_m.index.to_series().map(sizes)
+        list_test.append({
+            "call_month": call_month,
+            "list_folder": folder,
+            "list_date": f"{extract_date:%d %b %Y}",
+            "practices_without_list_row": int(matched.isna().sum()),
+            "open_active_gap": int(matched.sum() - pub_m[("Coverage", "Registered patients at open active practices")]),
+            "included_gap": int(matched[p_m.included].sum() - pub_m[("Coverage", "Registered patients at included practices")]),
+        })
+list_test = pd.DataFrame(list_test)
+list_test["total_abs_gap"] = list_test.open_active_gap.abs() + list_test.included_gap.abs()
+closest = list_test.loc[list_test.groupby("call_month").total_abs_gap.idxmin()]
+# I stop if any call month is closer to another month's list than to its own
+assert (closest.list_folder == closest.call_month).all(), closest
+list_test.to_csv(EVIDENCE_DIR / f"gold_patient_list_test_{MONTH}.csv", index=False)
+print("Closest list for each call month:", dict(zip(closest.call_month, closest.list_date)))
+print(list_test.to_string())
+
+# 2. Where is the August gap? I list every participating practice with no 1 August list row.
+no_list = practice_dim.loc[~practice_dim.in_registered,
+                           ["practice_code", "practice_name", "included", "attribution", "ods_status"]].copy()
+for folder in REG_LISTS:
+    if folder != MONTH:
+        no_list[f"list_size_{folder}"] = no_list.practice_code.map(lists[folder][1]).astype("Int64")
+no_list = no_list.sort_values(["included", "practice_name"], ascending=[False, True])
+no_list.to_csv(EVIDENCE_DIR / f"gold_practices_without_list_{MONTH}.csv", index=False)
+print(f"{len(no_list)} participating practices with no 1 August list row; {int(no_list.included.sum())} included")
+print(no_list.to_string())
 
 gate = pd.DataFrame(rows)
 explained = gate.measure.str.startswith("Registered patients at") & gate.status.eq("FAIL")
@@ -269,14 +320,14 @@ cuts = imd.imd2025_score.quantile([0.2, 0.4, 0.6, 0.8]).tolist()
 def quintile(score):
     if pd.isna(score):
         return "No score"
-    return QUINTILES[4 - sum(score > c for c in cuts)]  # more cut points exceeded = more deprived
+    return QUINTILES[4 - sum(score > c for c in cuts)]  # the more cut points a score exceeds, the more deprived I rank the practice
 pdim["imd_quintile"] = pdim.imd2025_score.map(quintile)
 assert imd.imd2025_score.map(quintile).value_counts().between(len(imd) // 5 - 5, len(imd) // 5 + 5).all()
 
 by_imd = coverage_table(pdim, "imd_quintile").reindex(QUINTILES + ["No score"])
 by_imd["patients_outside"] = by_imd.patients_not_agreed + by_imd.patients_agreed_not_included
 ascending = [f"{lo:.1f} to {hi:.1f}" for lo, hi in zip([imd.imd2025_score.min()] + cuts, cuts + [imd.imd2025_score.max()])]
-by_imd["score_range"] = ascending[::-1] + [""]  # Q1 holds the highest (most deprived) scores
+by_imd["score_range"] = ascending[::-1] + [""]  # I reverse the ranges because Q1 holds the highest (most deprived) scores
 assert pdim.loc[pdim.imd_quintile.eq("Q1 most deprived"), "imd2025_score"].min() >= cuts[-1]
 by_imd.to_csv(GOLD_DIR / f"coverage_by_deprivation_{MONTH}.csv")
 print((by_imd).to_string())
@@ -293,10 +344,17 @@ q1 = scored[scored.q1]
 q1_weights = q1.groupby("region_name").patients.sum()
 expected = (q1_weights * within.coverage_Q2_to_Q5).sum() / q1_weights.sum()
 actual = cov(q1)
-print(f"Q1 patient coverage: actual {actual:.1%}; expected from its regional mix {expected:.1%}; "
-      f"gap not explained by region {(actual - expected) * 100:+.1f} points")
+# I split the raw Q1 gap into the part its regional mix accounts for and the part left over
+rest = cov(scored[~scored.q1])
+# I give each region its share of the leftover: its share of Q1 patients x its own Q1 gap. These sum to the leftover.
+within["Q1_share_of_all_Q1_patients"] = q1_weights / q1_weights.sum()
+within["contribution_to_gap_points"] = within.Q1_share_of_all_Q1_patients * within.gap_points
+assert abs(within.contribution_to_gap_points.sum() - (actual - expected) * 100) < 1e-9
+print(f"Q1 patient coverage {actual:.1%} vs Q2-Q5 {rest:.1%}: raw gap {(actual - rest) * 100:+.1f} points")
+print(f"  explained by Q1's regional mix: {(expected - rest) * 100:+.1f} points (Q1 would be {expected:.1%})")
+print(f"  left over within regions:       {(actual - expected) * 100:+.1f} points")
 within.to_csv(GOLD_DIR / f"deprivation_gap_within_region_{MONTH}.csv")
-print((within.sort_values("gap_points")).to_string())
+print(within.sort_values("contribution_to_gap_points").to_string())
 
 oc_all = pd.read_parquet(SILVER_DIR / "practice_outcome_check.parquet")
 oc_all = oc_all[oc_all.month.eq(MONTH)].merge(pdim[["practice_code", "imd_quintile", "patients"]], on="practice_code", how="left")
@@ -310,7 +368,7 @@ outcomes_imd = pd.DataFrame({
     "callback_requested": q.CBT005 / q.CBT001,
     "missed": q.CBT004 / q.CBT001,
 })
-# the no-score practices hold almost no registered list, so a per-patient rate would be meaningless
+# I blank the rate for no-score practices: they hold almost no registered list, so a per-patient rate would mean nothing
 outcomes_imd.loc["No score", "calls_per_1000_patients_per_working_day"] = np.nan
 outcomes_imd.to_csv(GOLD_DIR / f"outcomes_by_deprivation_{MONTH}.csv")
 print((outcomes_imd).to_string())
@@ -340,14 +398,45 @@ spread["practices_with_zero"] = [(oc[c] == 0).sum() for c in spread.index]
 spread.to_csv(GOLD_DIR / f"practice_outcome_spread_{MONTH}.csv")
 print((spread[["count", "10%", "25%", "50%", "75%", "90%", "practices_with_zero"]]).to_string())
 
+# I use every call here, practice and shared-account alike, as NHS England's national tables do
+OUTCOME_CODES = {"CBT003": "answered", "CBT002": "ended_in_ivr", "CBT005": "callback_requested", "CBT004": "missed"}
+dt_out = day_time[day_time.indicator.isin(["CBT001", *OUTCOME_CODES])].copy()
+dt_out["day_label"] = np.where(dt_out.is_bank_holiday, "Monday (bank holiday)", dt_out.weekday.astype(str))
+# I add Tuesday to Friday as one group, so Monday has a single comparison row
+tue_fri = dt_out[dt_out.day_label.isin(["Tuesday", "Wednesday", "Thursday", "Friday"])].assign(day_label="Tuesday-Friday")
+counts = (pd.concat([dt_out, tue_fri])
+          .pivot_table(index=["day_label", "time_band"], columns="indicator", values="calls", aggfunc="sum", observed=True))
+
+band_outcomes = pd.DataFrame({"inbound": counts["CBT001"]})
+for code_, name in OUTCOME_CODES.items():
+    band_outcomes[name] = counts[code_] / counts["CBT001"]
+band_outcomes["outcome_sum_vs_inbound"] = counts[list(OUTCOME_CODES)].sum(axis=1) / counts["CBT001"] - 1
+
+# I tie the table back to the gate before reading anything off it
+days = band_outcomes.drop(index="Tuesday-Friday", level="day_label")
+assert int(days.inbound.sum()) == total, "inbound doesn't match the gate total"
+assert int(counts.loc[("Monday", "08:00-09:59"), "CBT001"]
+           + counts.loc[("Monday (bank holiday)", "08:00-09:59"), "CBT001"]) == mon_8_10, "Monday 8-10 doesn't match the gate"
+over_count = int(counts.drop(index="Tuesday-Friday", level="day_label")[list(OUTCOME_CODES)].sum().sum() - total)
+print(f"Outcomes over-count inbound by {over_count:,} calls in total (national figure: "
+      f"{int(nat[list(OUTCOME_CODES)].sum() - nat['CBT001']):,}); "
+      f"largest cell gap {days.outcome_sum_vs_inbound.abs().max():.2%}")
+band_outcomes.to_csv(GOLD_DIR / f"outcomes_by_day_band_{MONTH}.csv")
+
+# I show the core-hours bands, ordinary Monday against Tuesday-Friday
+view = band_outcomes.loc[(["Monday", "Tuesday-Friday"], CORE_BANDS), ["inbound", *OUTCOME_CODES.values()]]
+print(view.to_string())
+
+
 aug_ed = table1[table1.publication_month.eq(MONTH)].pivot_table(index="reference_month", columns=["group", "measure"], values="value")
 assert not table1[table1.publication_month.eq(MONTH)].duplicated(["reference_month", "group", "measure"]).any()
 UNDER_2 = next(c for c in aug_ed.columns if c[0] == "Call wait times (any time)" and c[1].startswith("Percentage of calls answered after waiting under 2"))
 months = sorted(participation.month.unique())
 trend = []
+# I read the national totals once; the loop only filters them by month
+nat_by_file = pd.read_csv(SILVER_DIR / "national_by_indicator_and_file.csv")
 for m in months:
-    nat_m = pd.read_csv(SILVER_DIR / "national_by_indicator_and_file.csv")
-    nat_m = nat_m[nat_m.month.eq(m)].set_index("indicator")["durations"]
+    nat_m = nat_by_file[nat_by_file.month.eq(m)].set_index("indicator")["durations"]
     pts = aug_ed.loc[m, ("Coverage", "Registered patients at included practices")]
     wd = aug_ed.loc[m, ("Working Days", "Number of working weekdays")]
     trend.append({
@@ -367,15 +456,15 @@ for m in months:
     })
 trend = pd.DataFrame(trend).set_index("month")
 
-# Do the monthly CSVs still agree with the latest (August 2026) edition of Table 1?
+# I check whether each month's CSVs still agree with the latest (August 2026) edition of Table 1
 latest = aug_ed.loc[months, [("Inbound calls", "Total Inbound Calls"), ("Calls dealt with", "Calls answered [2]")]]
 latest.columns = ["inbound_latest_edition", "answered_latest_edition"]
-nat_all = pd.read_csv(SILVER_DIR / "national_by_indicator_and_file.csv").pivot(index="month", columns="indicator", values="durations")
+nat_all = nat_by_file.pivot(index="month", columns="indicator", values="durations")
 vs_latest = latest.join(nat_all[["CBT001", "CBT007"]].rename(columns={"CBT001": "inbound_csv", "CBT007": "answered_csv"}))
 vs_latest["inbound_revision"] = vs_latest.inbound_latest_edition - vs_latest.inbound_csv
 vs_latest["answered_revision"] = vs_latest.answered_latest_edition - vs_latest.answered_csv
 revised_months = vs_latest[(vs_latest.inbound_revision != 0) | (vs_latest.answered_revision != 0)]
-KNOWN_REVISIONS = ["2025-11"]  # restated upward from the Jan 2026 edition; the Nov CSVs were not reissued
+KNOWN_REVISIONS = ["2025-11"]  # I allow only Nov 2025: restated upward from the Jan 2026 edition, and its CSVs were never reissued
 assert set(revised_months.index) <= set(KNOWN_REVISIONS), revised_months
 trend["revised_after_publication"] = trend.index.isin(revised_months.index)
 print("Months whose call totals were revised after their CSVs were published:")

@@ -112,9 +112,11 @@ identical in every month.
 - **The most deprived fifth of practices is the least covered.** Patient coverage by
   practice IMD 2025 quintile (equal numbers of practices, national cut points): Q1 83.4%,
   Q2 87.1%, Q3 86.5%, Q4 90.7%, Q5 88.8%.
-- **Region doesn't explain it.** Given its regional mix, Q1 would be at about 86.9%, so a
-  3.5-point shortfall remains. It's concentrated in the North West (−8.4 points) and
-  Midlands (−7.4); North East and Yorkshire runs the other way (+5.0).
+- **Region explains part of it, not all.** Q1 is 4.9 points below Q2–Q5 (88.3%). Given its
+  regional mix, Q1 would be at about 86.9%, so region accounts for 1.4 points and 3.5 remain.
+  The North West (−8.4 points within the region) and Midlands (−7.4) contribute −4.1 points
+  between them; North East and Yorkshire runs the other way (+5.0 within the region,
+  offsetting 1.4).
 - **Most deprived practices get more calls per patient**: 28.7 per 1,000 patients per
   working weekday in Q1 against 22.1 in Q5. Answered and missed shares are similar across
   quintiles.

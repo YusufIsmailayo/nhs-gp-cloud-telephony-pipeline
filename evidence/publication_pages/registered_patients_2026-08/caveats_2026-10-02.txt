@@ -1,5 +1,5 @@
 Source URL : https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice/august-2026
-Retrieved  : 2026-10-02T14:42:24+00:00
+Retrieved  : 2026-10-02T19:18:32+00:00
 HTML SHA256: 025626a9801b51762a331285d599ccaeedc58de079b7dbccc5f09f4b28c8d3ae
 
 # Patients Registered at a GP Practice, August 2026

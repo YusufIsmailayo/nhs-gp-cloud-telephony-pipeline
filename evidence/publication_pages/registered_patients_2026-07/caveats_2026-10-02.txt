@@ -1,0 +1,18 @@
+Source URL : https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice/july-2026
+Retrieved  : 2026-10-02T19:18:30+00:00
+HTML SHA256: c0b3ed5020d64a06f74c7d07a5b6367a79571bc688036013b166888d3fd6fd34
+
+# Patients Registered at a GP Practice, July 2026
+
+## Summary
+Data for this publication are extracted each month as a snapshot in time from the Primary Care Registration database within the PDS (Personal Demographics Service) system.  This release is an accurate snapshot as at 1 July 2026.
+Figures are reported by gender and single year of age (SYOA) and five-year age bands (up to age 95+) at GP Practice, Primary Care Network (PCN), Sub Integrated Care Board Location (SICBL), Integrated Care Board (ICB) and NHS England Commissioning Region levels. In addition, organisational mapping data is available to derive PCN, SICBL, ICB, and Commissioning Region for each GP practice and is updated each month to give relevant organisational mapping.
+Quarterly publications in January, April, July and October will include Lower Layer Super Output Area (LSOA) populations.
+
+## Key Facts
+63,436,508
+Patients Registered at GP practices in England as at 1 July 2026.
+52,404
+fewer registered patients as at 1 July 2026, compared to 1 June 2026.
+
+Last edited: 9 July 2026 9:31 am

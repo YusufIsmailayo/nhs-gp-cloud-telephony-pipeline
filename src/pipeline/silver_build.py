@@ -161,7 +161,7 @@ PARTICIPATION_COLS = ["month_published", "practice_code", "practice_name", "pcn_
 EXPECTED_HEADINGS = ["Month", "GP Code", "GP Name", "PCN Code", "PCN Name", "Sub ICB Code",
                      "Sub ICB Name", "ICB Code", "ICB Name", "Region Code", "Region Name",
                      "Agreed to Participate", "Data received / Passed", "Practice Code has been un",
-                     "List of open and act"]  # Oct 2025 heading reads "actice"
+                     "List of open and act"]  # I match the Oct 2025 heading too, which reads "actice"
 ODS_PRACTICE = re.compile(r"^[A-Z]\d{5}$")
 HEADING_GAPS = []
 
@@ -172,7 +172,7 @@ def read_participation(month: str) -> pd.DataFrame:
     hdr = raw.index[raw[0].astype(str).str.strip().eq("Month")][0]
     headings = raw.iloc[hdr, :15].astype(str).tolist()
     for got, want in zip(headings, EXPECTED_HEADINGS):
-        if got == "nan":  # Nov 2025 leaves the "included" heading blank; the Yes/No check below still applies
+        if got == "nan":  # Nov 2025 leaves the "included" heading blank, so I check that column by its Yes/No values below
             HEADING_GAPS.append((month, want))
             continue
         assert want.lower() in got.lower(), f"{month}: heading {got!r} - expected {want!r}"
@@ -455,7 +455,7 @@ def duration_check(month: str) -> pd.DataFrame:
     t["kind"] = np.where(t.measure.str.startswith("Percentage"), "share", "count")
     t["rebuilt"] = np.where(t.kind == "count", t.band.map(rebuilt), t.band.map(share))
     t["matches_label"] = (t.value - t.rebuilt).abs() <= np.where(t.kind == "count", 0, 0.0011)
-    # which band's rebuilt share does the published % actually equal?
+    # I find which band's rebuilt share the published % actually equals
     t["value_actually_is"] = [
         next((b for b in share.index if abs(share[b] - v) <= 0.0011), "no match") if k == "share" else b0
         for v, k, b0 in zip(t.value, t.kind, t.band)]

@@ -77,7 +77,7 @@ Building the gate also turned up:
 | Bank holiday share of the published Monday figure | 70,616 of 2,037,943 |
 | Registered patients outside the data | 7.91m (12.5%), of whom **7.80m** are at practices that *agreed* to take part but whose data isn't published |
 | Patient coverage by region | 81.3% (North East and Yorkshire) to 94.1% (London) |
-| Patient coverage, most deprived fifth of practices (IMD 2025) | **83.4%**, against 86.5–90.7% for the other four fifths. Region doesn't explain it: given its regional mix it would be about 86.9% |
+| Patient coverage, most deprived fifth of practices (IMD 2025) | **83.4%**, against 86.5–90.7% for the other four fifths. Region explains only part of it: given its regional mix it would be about 86.9%, so 3.5 points of the 4.9-point gap remain, mostly in the North West and Midlands |
 | Calls per 1,000 patients per working weekday, most vs least deprived fifth | 28.7 vs 22.1 |
 | The 31.9% neither answered nor missed | 25.3% ended in the automated menu (IVR) + 6.6% callback requests |
 | IVR share by region | 23.7% (North East and Yorkshire) to 28.2% (South East) |

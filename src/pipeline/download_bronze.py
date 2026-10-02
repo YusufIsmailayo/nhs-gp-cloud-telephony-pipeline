@@ -14,7 +14,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 TODAY = dt.date.today().isoformat()
 UA = {"User-Agent": "Mozilla/5.0"}
 BASE = "https://digital.nhs.uk/data-and-information/publications/statistical/cloud-based-telephony-data-in-general-practice"
-REG = "https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice/august-2026"
+REG = "https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice"
+# I hold the list for the call month plus the month either side. Silver uses only the
+# call month; Gold uses the other two to test which list NHS England's totals are built on.
+REG_MONTHS = ["2026-07", "2026-08", "2026-09"]
 FINGERTIPS = "https://fingertips.phe.org.uk/api"
 MONTHS = ["january","february","march","april","may","june","july","august","september","october","november","december"]
 manifest = []
@@ -67,11 +70,13 @@ def support():
 
 
 def registered():
-    """Registered patients: practice totals + mapping only."""
-    html = snapshot(REG, "registered_patients_2026-08")
-    for u in resources(html):
-        if fname(u) in ("gp-reg-pat-prac-all.zip", "gp-reg-pat-prac-map.zip"):
-            save(u, ROOT / "data/bronze/registered_patients/2026-08" / fname(u))
+    """Registered patients: practice totals + mapping only, for each month in REG_MONTHS."""
+    for ym in REG_MONTHS:
+        y, m = ym.split("-")
+        html = snapshot(f"{REG}/{MONTHS[int(m) - 1]}-{y}", f"registered_patients_{ym}")
+        for u in resources(html):
+            if fname(u) in ("gp-reg-pat-prac-all.zip", "gp-reg-pat-prac-map.zip"):
+                save(u, ROOT / "data/bronze/registered_patients" / ym / fname(u))
 
 
 def ods():
@@ -90,7 +95,7 @@ def fingertips():
          folder / "indicator_94240_gp.csv")
     save(f"{FINGERTIPS}/indicator_metadata/by_indicator_id?indicator_ids=94240",
          ROOT / f"evidence/reference/fingertips_94240_metadata_{TODAY}.json")
-    # NHS England's description of practice-level IMD (patient-LSOA weighted), the closest
+    # I keep NHS England's description of practice-level IMD (patient-LSOA weighted), the closest
     # published statement of the method; Fingertips doesn't document it for 94240
     save("https://digital.nhs.uk/supplementary-information/2025/diagnostic-prevalence-of-autism-by-general-practice-level-deprivation",
          ROOT / f"evidence/reference/nhse_practice_imd_method_{TODAY}.html")

@@ -85,7 +85,7 @@ def week_heatmap():
     fig, ax = plt.subplots(figsize=(11, 5.6))
     fig.subplots_adjust(left=0.2, right=0.9, top=0.8, bottom=0.17)
     cmap = LinearSegmentedColormap.from_list("blue", BLUE_RAMP)
-    y_edges = [0, 1, 2, 3, 4, 5, 6, 7, 7.35, 8.35]  # gap before the bank-holiday row
+    y_edges = [0, 1, 2, 3, 4, 5, 6, 7, 7.35, 8.35]  # I leave a gap before the bank-holiday row
     vmax = per_hour.values.max()
     for i, day in enumerate(rows):
         y0 = y_edges[i] if i < 7 else y_edges[8]
@@ -131,7 +131,7 @@ def coverage_by_region():
     c = pd.read_csv(GOLD / f"coverage_by_region_{MONTH}.csv", index_col=0)
     eng = c.loc[["ENGLAND"]]
     reg = c.drop("ENGLAND").sort_values("patient_coverage")
-    c = pd.concat([eng, reg])  # England at the bottom, regions above it
+    c = pd.concat([eng, reg])  # I put England at the bottom, regions above it
     labels = [n.title().replace(" And ", " and ").replace("Of ", "of ") for n in c.index]
     coverage_bars(c, labels, "coverage_by_region_2026-08.png",
                   "Who is behind the missing 13.7%? Registered patients by practice status, August 2026",
@@ -143,12 +143,12 @@ def coverage_by_region():
 def coverage_by_deprivation():
     c = pd.read_csv(GOLD / f"coverage_by_deprivation_{MONTH}.csv", index_col=0)
     reg = pd.read_csv(GOLD / f"coverage_by_region_{MONTH}.csv", index_col=0)
-    c = pd.concat([reg.loc[["ENGLAND"]], c.drop("No score").iloc[::-1]])  # England at the bottom, Q1 at the top
+    c = pd.concat([reg.loc[["ENGLAND"]], c.drop("No score").iloc[::-1]])  # I put England at the bottom and Q1 at the top
     labels = ["England"] + [f"{q}\nIMD score {r.replace(' to ', '–')}" for q, r in zip(c.index[1:], c.score_range[1:])]
     coverage_bars(c, labels, "coverage_by_deprivation_2026-08.png",
                   "The most deprived fifth of practices is the least covered, August 2026",
                   "Share of registered patients at open, active practices, by practice deprivation quintile (IMD 2025, equal numbers\n"
-                  "of practices per quintile). Region doesn't explain the gap: given its regional mix, Q1 would be at about 86.9%.",
+                  "of practices per quintile). Region explains only part of the gap: given its regional mix, Q1 would be at about 86.9%.",
                   "Source: NHS England (CBT; registered patients, 1 Aug 2026); OHID Fingertips indicator 94240 (IMD 2025). "
                   "77 practices with no score (12,197 patients) not shown.")
 
@@ -161,7 +161,7 @@ def coverage_bars(c, labels, filename, title, subtitle, foot):
     fig, ax = plt.subplots(figsize=(10, 5.4))
     fig.subplots_adjust(left=0.22, right=0.83, top=0.76, bottom=0.14)
     y = np.arange(len(c), dtype=float)
-    y[1:] += 0.6  # gap between England and the regions
+    y[1:] += 0.6  # I leave a gap between England and the regions
     h = 0.55
     segs = [(included, SERIES[0], "Included in the data"),
             (agreed_not, SERIES[1], "Agreed to take part, no data published"),
