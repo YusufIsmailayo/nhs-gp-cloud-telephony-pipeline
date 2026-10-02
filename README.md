@@ -30,7 +30,7 @@ missed. Before any of those rates is treated as national, I want to know:
 | Missed | 2,817,449 (10.4%) |
 | Answered by practice staff | 15,675,776 (57.7%) |
 | Participating practices | 5,327 |
-| Coverage | 86.3% → implies ~6,169–6,176 open and active practices |
+| Coverage | 86.3% = 5,327 / 6,171 open and active practices (Summary Table 1) |
 
 ## Sources
 
