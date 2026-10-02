@@ -1,0 +1,50 @@
+source,measure,published,rebuilt,difference,status,note
+Table 1,Open active practices,6171.0,6171.0,0.0,PASS,
+Table 1,Count of practices included,5327.0,5327.0,0.0,PASS,
+Table 1,Practice coverage,0.863,0.8632312429103873,0.00023124291038734146,PASS,
+Table 1,Registered patients at open active practices,63257431.0,63237908.0,-19523.0,EXPLAINED,42 participating practices have no 1 Aug 2026 list row (1 included); gap is located there
+Table 1,Registered patients at included practices,55333523.0,55329190.0,-4333.0,EXPLAINED,42 participating practices have no 1 Aug 2026 list row (1 included); gap is located there
+Table 1,Patient coverage,0.875,0.8749370709733155,-6.292902668447731e-05,PASS,
+Table 1,Number of working weekdays,20.0,20.0,0.0,PASS,
+Table 1,Total inbound calls,27160966.0,27160966.0,0.0,PASS,
+Table 1,"Rate of inbound calls per 1,000 registered patients at included practices",490.9,490.8975895002258,-0.0024104997741574152,PASS,
+Table 1,Calls answered,15675776.0,15675776.0,0.0,PASS,
+Table 1,Calls ended during the IVR stage,6866642.0,6866642.0,0.0,PASS,
+Table 1,Calls resulting in a call back request,1802007.0,1802007.0,0.0,PASS,
+Table 1,Call backs made,1794190.0,1794190.0,0.0,PASS,
+Table 1,Missed calls,2817449.0,2817449.0,0.0,PASS,
+Table 1,Percentage of Inbound calls answered,0.577,0.5771435375310289,0.00014353753102891442,PASS,
+Table 1,"Percentage of Inbound calls ended during the IVR stage of the call before joining the queue, in response to an automated message or diversion",0.253,0.2528128785993841,-0.0001871214006158861,PASS,
+Table 1,Percentage of Inbound calls resulting in a call back request,0.066,0.0663454679778326,0.00034546797783259475,PASS,
+Table 1,Percentage of inbound calls missed,0.104,0.10373154621967422,-0.00026845378032577805,PASS,
+Table 1,Percentage of call backs made of those requested,0.996,0.9956620590264078,-0.0003379409735921879,PASS,
+Table 1,Call wait times (any time): answered within 1 minute,7436448.0,7436448.0,0.0,PASS,
+Table 1,Call wait times (any time): answered within 1 to 2 minutes,2219704.0,2219704.0,0.0,PASS,
+Table 1,Call wait times (any time): answered within 2 to 5 minutes,2987512.0,2987512.0,0.0,PASS,
+Table 1,Call wait times (any time): answered after waiting over 5 minutes,3032112.0,3032112.0,0.0,PASS,
+Table 1,Call wait times (any time): % answered after waiting under 2 minutes,0.616,0.6159919610997249,-8.03890027512022e-06,PASS,
+Table 1,Call wait times (core hours): answered within 1 minute,7286824.0,7286824.0,0.0,PASS,
+Table 1,Call wait times (core hours): answered within 1 to 2 minutes,2184777.0,2184777.0,0.0,PASS,
+Table 1,Call wait times (core hours): answered within 2 to 5 minutes,2939967.0,2939967.0,0.0,PASS,
+Table 1,Call wait times (core hours): answered after waiting over 5 minutes,2976535.0,2976535.0,0.0,PASS,
+Table 1,Call wait times (core hours): % answered after waiting under 2 minutes,0.616,0.61551453093341,-0.0004854690665899719,PASS,
+Table 1,Call wait times (8am-10am): answered within 1 minute,1704373.0,1704373.0,0.0,PASS,
+Table 1,Call wait times (8am-10am): answered within 1 to 2 minutes,507202.0,507202.0,0.0,PASS,
+Table 1,Call wait times (8am-10am): answered within 2 to 5 minutes,731195.0,731195.0,0.0,PASS,
+Table 1,Call wait times (8am-10am): answered after waiting over 5 minutes,905733.0,905733.0,0.0,PASS,
+Table 1,Call wait times (8am-10am): % answered after waiting under 2 minutes,0.575,0.5746585100752163,-0.0003414899247836667,PASS,
+Table 4b,"Inbound calls, core hours (Mon-Fri 08:00-18:30)",25039293.0,25039293.0,0.0,PASS,rebuilt excluding the bank holiday
+Table 4b,"Inbound calls, 08:00-10:00 Mon-Fri",6801853.0,6801853.0,0.0,PASS,rebuilt excluding the bank holiday
+Table 4b,"Answered calls, core hours",15388103.0,15388103.0,0.0,PASS,
+Table 4b,"Answered calls, 08:00-10:00",3848503.0,3848503.0,0.0,PASS,
+Publication page,Inbound calls Monday 08:00-10:00,2037943.0,2037943.0,0.0,PASS,"rebuilt INCLUDING the bank holiday (31 Aug: 70,616)"
+Publication page,Monday 08:00-10:00 as share of inbound,0.075,0.07503205151098087,3.205151098087389e-05,PASS,
+Table 2,Date x time-band cells matching (310 cells),310.0,310.0,0.0,PASS,
+Table 1,Call duration 1 minute or less,3569721.0,3569721.0,0.0,PASS,
+Table 1,Call duration 1 to 2 minutes,5559164.0,5559164.0,0.0,PASS,
+Table 1,Call duration 2 to 5 minutes,5244761.0,5244761.0,0.0,PASS,
+Table 1,Call duration over 5 minutes,1302130.0,1302130.0,0.0,PASS,
+Table 1,% of calls with duration 1 minute or less,0.083,0.22772212361289162,0.1447221236128916,PUBLISHED LABEL ERROR,true value is printed against '1 to 2 minutes'
+Table 1,% of calls with duration 1 to 2 minutes,0.228,0.35463405447998236,0.12663405447998236,PUBLISHED LABEL ERROR,true value is printed against '2 to 5 minutes'
+Table 1,% of calls with duration 2 to 5 minutes,0.355,0.33457743973886844,-0.02042256026113154,PUBLISHED LABEL ERROR,true value is printed against 'over 5 minutes'
+Table 1,% of calls with duration over 5 minutes,0.335,0.08306638216825757,-0.25193361783174245,PUBLISHED LABEL ERROR,true value is printed against '1 minute or less'

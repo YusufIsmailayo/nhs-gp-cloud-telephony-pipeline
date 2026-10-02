@@ -1,0 +1,8 @@
+measure,value
+"Monday 08:00-10:00, published (5 Mondays incl. bank holiday)",2037943.0
+...of which the bank holiday (31 Aug),70616.0
+"Monday 08:00-10:00, 4 ordinary Mondays",1967327.0
+"Average ordinary Monday, 08:00-10:00",491831.75
+"Average ordinary Tuesday-Friday, 08:00-10:00",302157.875
+"Ordinary Monday vs Tue-Fri average, 08:00-10:00",1.6277310329906178
+Share of an ordinary Monday's calls arriving 08:00-10:00,0.2866466013399776
