@@ -1,0 +1,39 @@
+Source URL : https://digital.nhs.uk/data-and-information/publications/statistical/cloud-based-telephony-data-in-general-practice/august-2026
+Retrieved  : 2026-10-02T14:38:21+00:00
+HTML SHA256: d5c89df42ad6c24ef0a797c9850bc527310e62af2fef4c004dc99c6a82231ca0
+
+# Cloud Based Telephony Data in General Practice, August 2026
+
+## Summary
+This publication provides information about the number of cloud based telephony calls received by general practices. This information is published monthly and includes practice-level data.
+The publication presents a high-level time series from February 2025 onwards, showing monthly counts grouped by day and time of call of:
+• The total count of practices included in this publication
+• The total number of inbound calls into general practice
+The outcome of those calls grouped into:
+• Calls dealt with by either being answered, ending during the Interactive Voice Response (IVR) stage of the call prior to joining the queue to be answered, or as a result of a call back request
+• Calls not dealt with that ended whilst in the queue to speak to a member of staff
+The wait time (answered and missed) and duration (answered) of calls are also included
+The suppliers of Cloud Based Telephony Systems provide the data for this publication on behalf of the practices that they serve, and which have agreed to participate in the collection. Some system suppliers are not yet able to provide data for this collection.
+No patient identifiable or patient-clinical information is collected or available in this release.
+
+## Key Facts
+Cloud Based Telephony data coverage
+In August 2026, information was received for 5,327 GP Practices.
+This represents 86.3% of all open and active practices.
+Total calls to General Practice
+There were 27,160,966 calls to practices in August 2026.
+Total calls dealt with
+In August 2026, 24,344,425 (89.6%) of calls were dealt with
+57.7% calls that were answered,
+6.6% were calls that resulted in a call back request,
+and 25.3% ended within the Interactive Voice Response (IVR) prior to joining the queue to be answered, in response to an automated message or diversion
+Total calls not dealt with
+There were 2,817,449 (10.4%) calls which ended whilst the caller was waiting for their call to be answered
+The time and day of calls made to practices
+2,037,943 (7.5%) of inbound calls to practices in August 2026, were made between 8.00am and 10.00am on Monday mornings
+Time taken to answer the call
+Of the 15,675,776 calls answered by practice staff, 61.6% of calls answered after waiting under 2 minutes
+15,388,103 calls were answered during core hours (8am – 6.30pm Monday to Friday), of which 9,471,601 (61.6%) calls were answered after waiting under 2 minutes.
+3,848,503 calls were answered during the hours 8 – 10am Monday to Friday, of which 2,211,575 (57.5%) calls were answered after waiting under 2 minutes.
+
+Last edited: 24 September 2026 9:31 am
