@@ -1,0 +1,88 @@
+publication_month,kind,measure,band,value,rebuilt,matches_label,value_actually_is
+2025-10,count,Duration of 1 minute or less,le_1min,4051253.0,4051253.0,True,le_1min
+2025-10,count,Duration of 1 to 2 minutes,1_2min,6204131.0,6204131.0,True,1_2min
+2025-10,count,Duration of 2 to 5 minutes,2_5min,5674052.0,5674052.0,True,2_5min
+2025-10,count,Duration of over 5 minutes,over_5min,1310561.0,1310561.0,True,over_5min
+2025-10,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.235,0.235,True,le_1min
+2025-10,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.36,0.36,True,1_2min
+2025-10,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.329,0.329,True,2_5min
+2025-10,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.076,0.076,True,over_5min
+2025-11,count,Duration of 1 minute or less,le_1min,3723763.0,3723763.0,True,le_1min
+2025-11,count,Duration of 1 to 2 minutes,1_2min,5714444.0,5714444.0,True,1_2min
+2025-11,count,Duration of 2 to 5 minutes,2_5min,5261473.0,5261473.0,True,2_5min
+2025-11,count,Duration of over 5 minutes,over_5min,1236700.0,1236700.0,True,over_5min
+2025-11,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.234,0.234,True,le_1min
+2025-11,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.359,0.359,True,1_2min
+2025-11,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.33,0.33,True,2_5min
+2025-11,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.078,0.078,True,over_5min
+2025-12,count,Duration of 1 minute or less,le_1min,3937869.0,3937869.0,True,le_1min
+2025-12,count,Duration of 1 to 2 minutes,1_2min,5936340.0,5936340.0,True,1_2min
+2025-12,count,Duration of 2 to 5 minutes,2_5min,5353867.0,5353867.0,True,2_5min
+2025-12,count,Duration of over 5 minutes,over_5min,1251600.0,1251600.0,True,over_5min
+2025-12,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.36,0.36,True,1_2min
+2025-12,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.325,0.325,True,2_5min
+2025-12,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.076,0.076,True,over_5min
+2026-01,count,Duration of 1 minute or less,le_1min,4016403.0,4016403.0,True,le_1min
+2026-01,count,Duration of 1 to 2 minutes,1_2min,6273441.0,6273441.0,True,1_2min
+2026-01,count,Duration of 2 to 5 minutes,2_5min,5742834.0,5742834.0,True,2_5min
+2026-01,count,Duration of over 5 minutes,over_5min,1358861.0,1358861.0,True,over_5min
+2026-01,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.231,0.361,False,le_1min
+2026-01,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.361,0.33,False,1_2min
+2026-01,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.33,0.078,False,2_5min
+2026-01,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.078,0.231,False,over_5min
+2026-02,count,Duration of 1 minute or less,le_1min,3718068.0,3718068.0,True,le_1min
+2026-02,count,Duration of 1 to 2 minutes,1_2min,5780811.0,5780811.0,True,1_2min
+2026-02,count,Duration of 2 to 5 minutes,2_5min,5351658.0,5351658.0,True,2_5min
+2026-02,count,Duration of over 5 minutes,over_5min,1274110.0,1274110.0,True,over_5min
+2026-02,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.231,0.359,False,le_1min
+2026-02,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.359,0.332,False,1_2min
+2026-02,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.332,0.079,False,2_5min
+2026-02,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.079,0.231,False,over_5min
+2026-03,count,Duration of 1 minute or less,le_1min,4288287.0,4288287.0,True,le_1min
+2026-03,count,Duration of 1 to 2 minutes,1_2min,6484015.0,6484015.0,True,1_2min
+2026-03,count,Duration of 2 to 5 minutes,2_5min,5961677.0,5961677.0,True,2_5min
+2026-03,count,Duration of over 5 minutes,over_5min,1416877.0,1416877.0,True,over_5min
+2026-03,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.236,0.357,False,le_1min
+2026-03,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.357,0.328,False,1_2min
+2026-03,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.328,0.078,False,2_5min
+2026-03,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.078,0.236,False,over_5min
+2026-04,count,Duration of 1 minute or less,le_1min,3930118.0,3930118.0,True,le_1min
+2026-04,count,Duration of 1 to 2 minutes,1_2min,5971240.0,5971240.0,True,1_2min
+2026-04,count,Duration of 2 to 5 minutes,2_5min,5541429.0,5541429.0,True,2_5min
+2026-04,count,Duration of over 5 minutes,over_5min,1338203.0,1338203.0,True,over_5min
+2026-04,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.234,0.356,False,le_1min
+2026-04,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.356,0.33,False,1_2min
+2026-04,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.33,0.08,False,2_5min
+2026-04,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.08,0.234,False,over_5min
+2026-05,count,Duration of 1 minute or less,le_1min,3623871.0,3623871.0,True,le_1min
+2026-05,count,Duration of 1 to 2 minutes,1_2min,5551745.0,5551745.0,True,1_2min
+2026-05,count,Duration of 2 to 5 minutes,2_5min,5172566.0,5172566.0,True,2_5min
+2026-05,count,Duration of over 5 minutes,over_5min,1251006.0,1251006.0,True,over_5min
+2026-05,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.232,0.356,False,le_1min
+2026-05,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.356,0.332,False,1_2min
+2026-05,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.332,0.08,False,2_5min
+2026-05,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.08,0.232,False,over_5min
+2026-06,count,Duration of 1 minute or less,le_1min,4437199.0,4437199.0,True,le_1min
+2026-06,count,Duration of 1 to 2 minutes,1_2min,6629607.0,6629607.0,True,1_2min
+2026-06,count,Duration of 2 to 5 minutes,2_5min,6113820.0,6113820.0,True,2_5min
+2026-06,count,Duration of over 5 minutes,over_5min,1483096.0,1483096.0,True,over_5min
+2026-06,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.238,0.355,False,le_1min
+2026-06,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.355,0.328,False,1_2min
+2026-06,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.328,0.079,False,2_5min
+2026-06,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.079,0.238,False,over_5min
+2026-07,count,Duration of 1 minute or less,le_1min,4136938.0,4136938.0,True,le_1min
+2026-07,count,Duration of 1 to 2 minutes,1_2min,6415950.0,6415950.0,True,1_2min
+2026-07,count,Duration of 2 to 5 minutes,2_5min,5993991.0,5993991.0,True,2_5min
+2026-07,count,Duration of over 5 minutes,over_5min,1462174.0,1462174.0,True,over_5min
+2026-07,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.23,0.356,False,le_1min
+2026-07,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.356,0.333,False,1_2min
+2026-07,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.333,0.081,False,2_5min
+2026-07,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.081,0.23,False,over_5min
+2026-08,count,Duration of 1 minute or less,le_1min,3569721.0,3569721.0,True,le_1min
+2026-08,count,Duration of 1 to 2 minutes,1_2min,5559164.0,5559164.0,True,1_2min
+2026-08,count,Duration of 2 to 5 minutes,2_5min,5244761.0,5244761.0,True,2_5min
+2026-08,count,Duration of over 5 minutes,over_5min,1302130.0,1302130.0,True,over_5min
+2026-08,share,Percentage of calls with a duration of 1 to 2 minutes,1_2min,0.228,0.355,False,le_1min
+2026-08,share,Percentage of calls with a duration of 2 to 5 minutes,2_5min,0.355,0.335,False,1_2min
+2026-08,share,Percentage of calls with a duration of over 5 minutes,over_5min,0.335,0.083,False,2_5min
+2026-08,share,Percentage of calls with a duration of 1 minute or less,le_1min,0.083,0.228,False,over_5min

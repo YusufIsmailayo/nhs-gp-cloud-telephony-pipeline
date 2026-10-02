@@ -1,0 +1,8 @@
+set,count,codes
+"participation list (open & active, Aug 2026)",6171,
+  ...not in registered-patients file,42,"B86009, E83666, F84750, H84053, K84008, N84043 ..."
+  ...not ACTIVE GP practice in epraccur (2 Oct),8,"B86009, F81746, G82027, G83015, H84053, H85637, K84008, Y03303"
+registered-patients file,6129,
+  ...not in participation list,0,
+"ACTIVE GP practices in England, epraccur (2 Oct)",6165,
+  ...not in participation list,2,"W93019, Y08402"

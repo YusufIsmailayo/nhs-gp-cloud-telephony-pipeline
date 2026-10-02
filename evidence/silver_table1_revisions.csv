@@ -1,0 +1,107 @@
+reference_month,group,measure,editions,distinct,first,last,change_pct
+2024-10,Call durations,Percentage of calls with a duration of 1 minute or less,5,2,0.242,0.069,-71.49
+2024-10,Call durations,Percentage of calls with a duration of 1 to 2 minutes,6,2,0.362,0.242,-33.15
+2024-10,Call durations,Percentage of calls with a duration of 2 to 5 minutes,6,2,0.326,0.362,11.04
+2024-10,Call durations,Percentage of calls with a duration of over 5 minutes,6,2,0.069,0.326,372.46
+2024-10,Coverage,Count of practices included,6,2,3020.0,3019.0,-0.03
+2024-10,Coverage,Practice coverage [1],6,2,0.482,0.481,-0.21
+2024-10,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",6,2,691.7906143574799,691.8,0.0
+2024-11,Call durations,Percentage of calls with a duration of 1 minute or less,6,2,0.242,0.07,-71.07
+2024-11,Call durations,Percentage of calls with a duration of 1 to 2 minutes,7,2,0.361,0.242,-32.96
+2024-11,Call durations,Percentage of calls with a duration of 2 to 5 minutes,7,2,0.327,0.361,10.4
+2024-11,Call durations,Percentage of calls with a duration of over 5 minutes,7,2,0.07,0.327,367.14
+2024-11,Coverage,Registered patients at included practices,3,2,33185533.0,33185529.0,-0.0
+2024-11,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",7,2,621.1001342060711,621.1,-0.0
+2024-12,Call durations,Percentage of calls with a duration of 1 minute or less,7,2,0.248,0.068,-72.58
+2024-12,Call durations,Percentage of calls with a duration of 1 to 2 minutes,8,2,0.363,0.248,-31.68
+2024-12,Call durations,Percentage of calls with a duration of 2 to 5 minutes,8,2,0.321,0.363,13.08
+2024-12,Call durations,Percentage of calls with a duration of over 5 minutes,8,2,0.068,0.321,372.06
+2024-12,Coverage,Registered patients at included practices,4,2,33609684.0,33609680.0,-0.0
+2024-12,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",8,2,556.1032945147595,556.1,-0.0
+2025-01,Call durations,Percentage of calls with a duration of 1 minute or less,8,2,0.239,0.069,-71.13
+2025-01,Call durations,Percentage of calls with a duration of 1 to 2 minutes,9,2,0.365,0.239,-34.52
+2025-01,Call durations,Percentage of calls with a duration of 2 to 5 minutes,9,2,0.327,0.365,11.62
+2025-01,Call durations,Percentage of calls with a duration of over 5 minutes,9,2,0.069,0.327,373.91
+2025-01,Coverage,Registered patients at included practices,5,2,32533903.0,32533899.0,-0.0
+2025-01,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",9,2,655.787502655307,655.8,0.0
+2025-02,Call durations,Percentage of calls with a duration of 1 minute or less,9,2,0.238,0.071,-70.17
+2025-02,Call durations,Percentage of calls with a duration of 1 to 2 minutes,10,2,0.362,0.238,-34.25
+2025-02,Call durations,Percentage of calls with a duration of 2 to 5 minutes,10,2,0.329,0.362,10.03
+2025-02,Call durations,Percentage of calls with a duration of over 5 minutes,10,2,0.071,0.329,363.38
+2025-02,Coverage,Registered patients at included practices,6,2,34556350.0,34556345.0,-0.0
+2025-02,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",10,2,588.853076207412,588.9,0.01
+2025-03,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.241,0.07,-70.95
+2025-03,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.364,0.241,-33.79
+2025-03,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.326,0.364,11.66
+2025-03,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.07,0.326,365.71
+2025-03,Coverage,Registered patients at included practices,7,2,34935758.0,34935748.0,-0.0
+2025-03,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,2,620.1843108714,620.2,0.0
+2025-04,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.24,0.072,-70.0
+2025-04,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.361,0.24,-33.52
+2025-04,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.328,0.361,10.06
+2025-04,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.072,0.328,355.56
+2025-04,Coverage,Registered patients at included practices,7,2,35173172.0,35173161.0,-0.0
+2025-04,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,2,591.03409837475,591.0,-0.01
+2025-05,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.235,0.072,-69.36
+2025-05,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.361,0.235,-34.9
+2025-05,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.331,0.361,9.06
+2025-05,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.072,0.331,359.72
+2025-05,Coverage,Registered patients at included practices,7,2,35181327.0,35181316.0,-0.0
+2025-05,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,2,574.6497566734763,574.6,-0.01
+2025-06,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.234,0.073,-68.8
+2025-06,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.362,0.234,-35.36
+2025-06,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.331,0.362,9.37
+2025-06,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.073,0.331,353.42
+2025-06,Coverage,Count of practices included,11,2,3525.0,3525.0,0.0
+2025-06,Coverage,Practice coverage [1],11,2,0.566,0.566,0.0
+2025-06,Coverage,Registered patients at included practices,7,2,36986396.0,36986391.0,-0.0
+2025-06,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,2,615.9200534163966,615.9,-0.0
+2025-07,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.231,0.075,-67.53
+2025-07,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.363,0.231,-36.36
+2025-07,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.332,0.363,9.34
+2025-07,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.075,0.332,342.67
+2025-07,Coverage,Count of practices included,11,2,4390.0,4390.0,0.0
+2025-07,Coverage,Patient coverage,11,2,0.721,0.719,-0.28
+2025-07,Coverage,Registered patients at included practices,7,2,46023351.0,45902072.0,-0.26
+2025-07,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,3,609.9612564065576,611.6,0.27
+2025-08,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.231,0.076,-67.1
+2025-08,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.362,0.231,-36.19
+2025-08,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.332,0.362,9.04
+2025-08,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.076,0.332,336.84
+2025-08,Coverage,Patient coverage,11,2,0.721,0.72,-0.14
+2025-08,Coverage,Registered patients at included practices,7,2,46032304.0,45943618.0,-0.19
+2025-08,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,3,531.6122564710208,532.6,0.19
+2025-09,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.232,0.074,-68.1
+2025-09,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.365,0.232,-36.44
+2025-09,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.33,0.365,10.61
+2025-09,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.074,0.33,345.95
+2025-09,Coverage,Patient coverage,11,2,0.726,0.725,-0.14
+2025-09,Coverage,Registered patients at included practices,7,2,46372393.0,46284033.0,-0.19
+2025-09,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,3,631.1413128927809,632.3,0.18
+2025-10,Call durations,Percentage of calls with a duration of 1 minute or less,10,2,0.235,0.076,-67.66
+2025-10,Call durations,Percentage of calls with a duration of 1 to 2 minutes,11,2,0.36,0.235,-34.72
+2025-10,Call durations,Percentage of calls with a duration of 2 to 5 minutes,11,2,0.329,0.36,9.42
+2025-10,Call durations,Percentage of calls with a duration of over 5 minutes,11,2,0.076,0.329,332.89
+2025-10,Coverage,Patient coverage,11,2,0.759,0.757,-0.26
+2025-10,Coverage,Registered patients at included practices,7,2,48489763.0,48381267.0,-0.22
+2025-10,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",11,3,648.4795151504452,649.9,0.22
+2025-11,Call durations,Duration of 1 minute or less,9,2,3723763.0,3727484.0,0.1
+2025-11,Call durations,Duration of 1 to 2 minutes,9,2,5714444.0,5719846.0,0.09
+2025-11,Call durations,Duration of 2 to 5 minutes,9,2,5261473.0,5266686.0,0.1
+2025-11,Call durations,Duration of over 5 minutes,9,2,1236700.0,1237795.0,0.09
+2025-11,Call durations,Percentage of calls with a duration of 1 minute or less,9,2,0.234,0.078,-66.67
+2025-11,Call durations,Percentage of calls with a duration of 1 to 2 minutes,9,2,0.359,0.234,-34.82
+2025-11,Call durations,Percentage of calls with a duration of 2 to 5 minutes,9,2,0.33,0.359,8.79
+2025-11,Call durations,Percentage of calls with a duration of over 5 minutes,9,2,0.078,0.33,323.08
+2025-11,Calls dealt with,Call backs made,9,2,2223302.0,2224754.0,0.07
+2025-11,Calls dealt with,Calls answered [2],6,2,15936380.0,15951811.0,0.1
+2025-11,Calls dealt with,Calls resulting in a call back request [2],6,2,2237737.0,2239189.0,0.06
+2025-11,Coverage,Count of practices included,9,2,5015.0,5019.0,0.08
+2025-11,Coverage,Open active practices,9,2,6208.0,6214.0,0.1
+2025-11,Coverage,Patient coverage,9,2,0.825,0.823,-0.24
+2025-11,Coverage,Registered patients at included practices,6,2,52771608.0,52627765.0,-0.27
+2025-11,Inbound calls,"Rate of inbound calls per 1,000 patients registered at practices included",9,2,557.9,560.0,0.38
+2025-11,Inbound calls,Total Inbound Calls,9,2,29439840.0,29469074.0,0.1
+2025-12,Call durations,Percentage of calls with a duration of 1 to 2 minutes,9,2,0.36,0.239,-33.61
+2025-12,Call durations,Percentage of calls with a duration of 2 to 5 minutes,9,2,0.325,0.36,10.77
+2025-12,Call durations,Percentage of calls with a duration of over 5 minutes,9,2,0.076,0.325,327.63
