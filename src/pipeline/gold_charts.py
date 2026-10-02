@@ -131,7 +131,29 @@ def coverage_by_region():
     c = pd.read_csv(GOLD / f"coverage_by_region_{MONTH}.csv", index_col=0)
     eng = c.loc[["ENGLAND"]]
     reg = c.drop("ENGLAND").sort_values("patient_coverage")
-    c = pd.concat([eng, reg])  # England at the bottom once inverted below
+    c = pd.concat([eng, reg])  # England at the bottom, regions above it
+    labels = [n.title().replace(" And ", " and ").replace("Of ", "of ") for n in c.index]
+    coverage_bars(c, labels, "coverage_by_region_2026-08.png",
+                  "Who is behind the missing 13.7%? Registered patients by practice status, August 2026",
+                  "Share of registered patients at open, active practices. Almost every patient outside the data is at a practice\n"
+                  "that agreed to take part but whose supplier data isn't published yet.",
+                  SOURCE + " 42 practices with no list row count as zero patients.")
+
+
+def coverage_by_deprivation():
+    c = pd.read_csv(GOLD / f"coverage_by_deprivation_{MONTH}.csv", index_col=0)
+    reg = pd.read_csv(GOLD / f"coverage_by_region_{MONTH}.csv", index_col=0)
+    c = pd.concat([reg.loc[["ENGLAND"]], c.drop("No score").iloc[::-1]])  # England at the bottom, Q1 at the top
+    labels = ["England"] + [f"{q}\nIMD score {r.replace(' to ', '–')}" for q, r in zip(c.index[1:], c.score_range[1:])]
+    coverage_bars(c, labels, "coverage_by_deprivation_2026-08.png",
+                  "The most deprived fifth of practices is the least covered, August 2026",
+                  "Share of registered patients at open, active practices, by practice deprivation quintile (IMD 2025, equal numbers\n"
+                  "of practices per quintile). Region doesn't explain the gap: given its regional mix, Q1 would be at about 86.9%.",
+                  "Source: NHS England (CBT; registered patients, 1 Aug 2026); OHID Fingertips indicator 94240 (IMD 2025). "
+                  "77 practices with no score (12,197 patients) not shown.")
+
+
+def coverage_bars(c, labels, filename, title, subtitle, foot):
     included = c.patient_coverage
     agreed_not = c.patients_agreed_not_included / c.patients
     not_agreed = c.patients_not_agreed / c.patients
@@ -149,7 +171,7 @@ def coverage_by_region():
         ax.barh(y, vals, left=left, height=h, color=colour, edgecolor=SURFACE, linewidth=2, label=label)
         left += vals.values
     ax.set_xlim(0, 1)
-    ax.set_yticks(y, [n.title().replace(" And ", " and ").replace("Of ", "of ") for n in c.index])
+    ax.set_yticks(y, labels)
     ax.get_yticklabels()[0].set_fontweight("semibold")
     ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0%}"))
     quiet(ax, "x")
@@ -160,11 +182,9 @@ def coverage_by_region():
     ax.text(1.015, y[-1] + 0.75, "Patients\noutside", va="bottom", ha="left", fontsize=8, color=MUTED)
     ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), ncol=3, frameon=False, fontsize=9, handlelength=1, handleheight=1)
 
-    titles(fig, "Who is behind the missing 13.7%? Registered patients by practice status, August 2026",
-           "Share of registered patients at open, active practices. Almost every patient outside the data is at a practice\n"
-           "that agreed to take part but whose supplier data isn't published yet.")
-    footer(fig, SOURCE + " 42 practices with no list row count as zero patients.")
-    fig.savefig(OUT / "coverage_by_region_2026-08.png", dpi=200)
+    titles(fig, title, subtitle)
+    footer(fig, foot)
+    fig.savefig(OUT / filename, dpi=200)
     plt.close(fig)
 
 
@@ -244,6 +264,7 @@ def outcomes_by_region():
 if __name__ == "__main__":
     week_heatmap()
     coverage_by_region()
+    coverage_by_deprivation()
     monthly_trend()
     outcomes_by_region()
     for p in sorted(OUT.glob("*.png")):

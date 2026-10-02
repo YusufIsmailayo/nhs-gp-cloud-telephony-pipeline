@@ -263,6 +263,58 @@ coverage["patients_outside"] = coverage.patients_not_agreed + coverage.patients_
 coverage.to_csv(GOLD_DIR / f"coverage_by_region_{MONTH}.csv")
 print((coverage).to_string())
 
+imd = pd.read_parquet(SILVER_DIR / "practice_imd2025.parquet")
+QUINTILES = ["Q1 most deprived", "Q2", "Q3", "Q4", "Q5 least deprived"]
+cuts = imd.imd2025_score.quantile([0.2, 0.4, 0.6, 0.8]).tolist()
+def quintile(score):
+    if pd.isna(score):
+        return "No score"
+    return QUINTILES[4 - sum(score > c for c in cuts)]  # more cut points exceeded = more deprived
+pdim["imd_quintile"] = pdim.imd2025_score.map(quintile)
+assert imd.imd2025_score.map(quintile).value_counts().between(len(imd) // 5 - 5, len(imd) // 5 + 5).all()
+
+by_imd = coverage_table(pdim, "imd_quintile").reindex(QUINTILES + ["No score"])
+by_imd["patients_outside"] = by_imd.patients_not_agreed + by_imd.patients_agreed_not_included
+ascending = [f"{lo:.1f} to {hi:.1f}" for lo, hi in zip([imd.imd2025_score.min()] + cuts, cuts + [imd.imd2025_score.max()])]
+by_imd["score_range"] = ascending[::-1] + [""]  # Q1 holds the highest (most deprived) scores
+assert pdim.loc[pdim.imd_quintile.eq("Q1 most deprived"), "imd2025_score"].min() >= cuts[-1]
+by_imd.to_csv(GOLD_DIR / f"coverage_by_deprivation_{MONTH}.csv")
+print((by_imd).to_string())
+
+scored = pdim[pdim.imd2025_score.notna()].assign(q1=lambda t: t.imd_quintile.eq("Q1 most deprived"))
+def cov(g):
+    return (g.patients * g.included).sum() / g.patients.sum()
+within = scored.groupby(["region_name", "q1"]).apply(cov, include_groups=False).unstack()
+within.columns = ["coverage_Q2_to_Q5", "coverage_Q1"]
+within["gap_points"] = (within.coverage_Q1 - within.coverage_Q2_to_Q5) * 100
+within["Q1_share_of_region_patients"] = scored.groupby("region_name").apply(
+    lambda g: g.loc[g.q1, "patients"].sum() / g.patients.sum(), include_groups=False)
+q1 = scored[scored.q1]
+q1_weights = q1.groupby("region_name").patients.sum()
+expected = (q1_weights * within.coverage_Q2_to_Q5).sum() / q1_weights.sum()
+actual = cov(q1)
+print(f"Q1 patient coverage: actual {actual:.1%}; expected from its regional mix {expected:.1%}; "
+      f"gap not explained by region {(actual - expected) * 100:+.1f} points")
+within.to_csv(GOLD_DIR / f"deprivation_gap_within_region_{MONTH}.csv")
+print((within.sort_values("gap_points")).to_string())
+
+oc_all = pd.read_parquet(SILVER_DIR / "practice_outcome_check.parquet")
+oc_all = oc_all[oc_all.month.eq(MONTH)].merge(pdim[["practice_code", "imd_quintile", "patients"]], on="practice_code", how="left")
+q = oc_all.groupby("imd_quintile")[["CBT001", "CBT002", "CBT003", "CBT004", "CBT005", "CBT007", "patients"]].sum().reindex(QUINTILES + ["No score"])
+outcomes_imd = pd.DataFrame({
+    "practices": oc_all.groupby("imd_quintile").size().reindex(q.index),
+    "inbound": q.CBT001,
+    "calls_per_1000_patients_per_working_day": q.CBT001 / q.patients * 1000 / working_weekdays,
+    "answered": q.CBT007 / q.CBT001,
+    "ended_in_ivr": q.CBT002 / q.CBT001,
+    "callback_requested": q.CBT005 / q.CBT001,
+    "missed": q.CBT004 / q.CBT001,
+})
+# the no-score practices hold almost no registered list, so a per-patient rate would be meaningless
+outcomes_imd.loc["No score", "calls_per_1000_patients_per_working_day"] = np.nan
+outcomes_imd.to_csv(GOLD_DIR / f"outcomes_by_deprivation_{MONTH}.csv")
+print((outcomes_imd).to_string())
+
 OUTCOMES = {"CBT003": "answered", "CBT002": "ended_in_ivr", "CBT005": "callback_requested", "CBT004": "missed"}
 dd = durations[durations.indicator.isin(["CBT001", *OUTCOMES])]
 reg_names = practice_dim.drop_duplicates("region_code").set_index("region_code")["region_name"]

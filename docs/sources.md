@@ -1,7 +1,7 @@
 # Sources, join keys and open questions
 
 Status as of 2 October 2026: all sources downloaded (`src/pipeline/download_bronze.py`),
-Bronze and Silver built (`notebooks/01_bronze.ipynb`, `notebooks/02_silver.ipynb`). Every
+Bronze, Silver and Gold built (`notebooks/01_bronze.ipynb` → `03_gold.ipynb`). Every
 downloaded file, with source URL, timestamp and SHA-256, is listed in
 `evidence/download_manifest_2026-10-02.txt`. Only August 2026 telephony is committed; the
 Oct 2025 – Jul 2026 back series (~330 MB) is re-downloaded by the script.
@@ -14,7 +14,7 @@ Oct 2025 – Jul 2026 back series (~330 MB) is re-downloaded by the script.
 | Outcome and indicator definitions | Series "Supporting Information" page (last edited 6 May 2026) | — | read; applied in Silver Step 1 |
 | Registered list size | NHS England Digital, Patients Registered at a GP Practice, 1 August 2026: `gp-reg-pat-prac-all` (practice totals) + `gp-reg-pat-prac-map` (practice→PCN/sub-ICB/ICB/region) | `CODE` / `PRACTICE_CODE` | in Silver — 6,129 practices, 63,237,908 patients |
 | Practice register (denominator check) | ODS `epraccur`, 2 Oct 2026 — status, role code (`RO76` = GP practice), postcode. Column layout from the ODS Data Search & Export reference catalogue (snapshot in `evidence/reference/`) | `practice_code` | in Silver — columns named from the spec |
-| Deprivation | Fingertips practice-level IMD (registered-population-weighted), not practice-postcode IMD | ODS practice code | not yet downloaded; vintage to confirm (IMD 2019 vs 2025) |
+| Deprivation | Fingertips indicator 94240, "Deprivation score (IMD 2025)", GP practice level (area type 7), 6,143 practices. Higher score = more deprived. Method: see open question 7 | `Area Code` = ODS practice code | in Silver — 6,094 of the 6,171 August practices matched |
 
 ### Telephony files per month
 
@@ -103,6 +103,21 @@ identical in every month.
   wait-time method; earlier months were not corrected.
 - **42 participating practices have no 1 August registered-patient row.** Their patient
   counts are unknown here, not zero.
+- **IMD 2025 coverage.** 77 participating practices have no Fingertips score (67 not
+  included; 12,197 patients in total). 49 Fingertips practices aren't on the August list;
+  all 49 are dormant or inactive in epraccur.
+
+### From Gold: deprivation
+
+- **The most deprived fifth of practices is the least covered.** Patient coverage by
+  practice IMD 2025 quintile (equal numbers of practices, national cut points): Q1 83.4%,
+  Q2 87.1%, Q3 86.5%, Q4 90.7%, Q5 88.8%.
+- **Region doesn't explain it.** Given its regional mix, Q1 would be at about 86.9%, so a
+  3.5-point shortfall remains. It's concentrated in the North West (−8.4 points) and
+  Midlands (−7.4); North East and Yorkshire runs the other way (+5.0).
+- **Most deprived practices get more calls per patient**: 28.7 per 1,000 patients per
+  working weekday in Q1 against 22.1 in Q5. Answered and missed shares are similar across
+  quintiles.
 
 ## Open questions
 
@@ -121,6 +136,19 @@ identical in every month.
    so the Monday 08:00–10:00 figure can be split by coverage, region or practice.
 5. ~~Why do the practice-level CSVs contain 4,990 practices when 5,327 are included?~~
    Shared phone accounts — see Silver findings.
-6. Does NHS England compute "registered patients at open active practices" (63,257,431)
-   from a different list snapshot? Joining the 1 August file to the 6,171 gives 63,237,908
-   (19,523 lower, with 42 practices unmatched). To settle in the Gold reconciliation gate.
+6. ~~Does NHS England compute "registered patients at open active practices" from a
+   different list snapshot?~~ No. Tested against the 1 July, 1 August and 1 September 2026
+   snapshots: 1 August is closest for August (and 1 July for July), so NHS England uses the
+   same-month list. The remaining gap (−19,523 open active, −4,333 included; 0.03%) sits
+   entirely in the 42 participating practices with no 1 August list row. 41 aren't included
+   and are almost all services holding no registered list (walk-in centres, extended-access
+   hubs); the one included is Berrylands Surgery (H84053, dormant, shared account). The
+   source NHS England uses for those 42 isn't in any public file I hold, so the Gold gate
+   marks both totals EXPLAINED. Patient coverage still matches at published precision.
+7. **How exactly is Fingertips indicator 94240 built?** Its metadata gives only the name
+   and source (MHCLG); the IMD 2015 and 2019 predecessors (91872, 93553) are no fuller. The
+   usual practice-level method weights the IMD scores of the LSOAs where registered
+   patients live, and NHS England documents that method
+   (`evidence/reference/nhse_practice_imd_method_2026-10-02.html`). That's not confirmed
+   for 94240. If it turned out to be practice-postcode IMD, the quintiles would describe
+   practice location rather than patient population.

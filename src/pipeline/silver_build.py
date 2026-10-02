@@ -283,9 +283,22 @@ registered.to_parquet(SILVER_DIR / "registered_patients.parquet", index=False)
 print(f"Registered patients {registered.extract_date.iloc[0]:%d %b %Y}: {len(registered):,} practices, "
       f"{registered.registered_patients.sum():,} patients")
 
+fp = pd.read_parquet(next((BRONZE_DIR / "fingertips").glob("imd2025_gp_*/indicator_94240_gp.parquet")))
+assert fp["Indicator ID"].eq("94240").all() and fp["Time period"].eq("2025").all()
+england_score = float(fp.loc[fp["Area Type"].eq("England"), "Value"].iloc[0])
+imd = (fp[fp["Area Type"].eq("GPs")][["Area Code", "Area Name", "Value"]]
+       .rename(columns={"Area Code": "practice_code", "Area Name": "fingertips_name", "Value": "imd2025_score"}))
+imd["imd2025_score"] = pd.to_numeric(imd.imd2025_score, errors="raise")
+assert imd.practice_code.is_unique
+imd["snapshot_date"] = pd.Timestamp(fp["_snapshot"].iloc[0])
+imd.to_parquet(SILVER_DIR / "practice_imd2025.parquet", index=False)
+print(f"Fingertips IMD 2025: {len(imd):,} GP practices; England score {england_score:.2f}; "
+      f"practice range {imd.imd2025_score.min():.1f} to {imd.imd2025_score.max():.1f}")
+
 aug = participation[participation.month == ANALYSIS_MONTH]
 P = set(aug.practice_code)
 R = set(registered.practice_code)
+D = set(imd.practice_code)
 G_active = set(gp.loc[gp.status.eq("ACTIVE") & gp.nhser_code.str.startswith("Y"), "practice_code"])
 
 join_report = pd.DataFrame([
@@ -296,6 +309,9 @@ join_report = pd.DataFrame([
     ("  ...not in participation list", len(R - P), ", ".join(sorted(R - P))),
     ("ACTIVE GP practices in England, epraccur (2 Oct)", len(G_active), ""),
     ("  ...not in participation list", len(G_active - P), ", ".join(sorted(G_active - P))),
+    ("participation list ...without a Fingertips IMD 2025 score", len(P - D), ", ".join(sorted(P - D)[:6]) + (" ..." if len(P - D) > 6 else "")),
+    ("Fingertips IMD 2025 practices", len(D), ""),
+    ("  ...not in participation list", len(D - P), ", ".join(sorted(D - P)[:6]) + (" ..." if len(D - P) > 6 else "")),
 ], columns=["set", "count", "codes"])
 print("epraccur status of the participation practices it doesn't list as active:",
       gp[gp.practice_code.isin(P - G_active)].status.value_counts().to_dict())
@@ -308,11 +324,15 @@ practice_dim = (aug.drop(columns=["month"])
                        on="practice_code", how="left", indicator="in_registered")
                 .merge(register[["practice_code", "status", "postcode", "open_date", "close_date"]]
                        .rename(columns={"status": "ods_status", "postcode": "ods_postcode"}),
-                       on="practice_code", how="left"))
+                       on="practice_code", how="left")
+                .merge(imd[["practice_code", "imd2025_score"]], on="practice_code", how="left"))
 practice_dim["in_registered"] = practice_dim.in_registered.eq("both")
 practice_dim.insert(0, "month", ANALYSIS_MONTH)
 geo_mismatch = practice_dim.in_registered & (practice_dim.icb_code != practice_dim.icb_code_registered)
 print("ICB differs between participation list and registered-patients mapping:", int(geo_mismatch.sum()))
+no_score = practice_dim[practice_dim.imd2025_score.isna()]
+print("Participating practices without an IMD score, by attribution:", no_score.attribution.value_counts().to_dict(),
+      f"| registered patients: {int(no_score.registered_patients.fillna(0).sum()):,}")
 practice_dim.to_parquet(SILVER_DIR / f"practice_dim_{ANALYSIS_MONTH}.parquet", index=False)
 join_report.to_csv(EVIDENCE_DIR / f"silver_practice_join_{ANALYSIS_MONTH}.csv", index=False)
 print((practice_dim.attribution.value_counts()).to_string())

@@ -21,7 +21,8 @@ In August 2026, NHS England reported 27,160,966 calls to 5,327 GP practices (86.
 active practices): 57.7% answered by practice staff, 10.4% missed. Before treating any of
 those rates as national, three things needed checking:
 
-1. **Coverage by patients.** Who sits behind the 13.7% of practices not in the data?
+1. **Coverage by patients.** Who sits behind the 13.7% of practices not in the data, and
+   are they skewed by region or deprivation?
 2. **The remainder.** Answered plus missed is only 68.1%. What happens to the other 31.9%?
 3. **Monday 08:00–10:00.** Rebuild the published 2,037,943 rather than take it on trust.
    August 2026 had five Mondays, and one of them was the Summer Bank Holiday.
@@ -35,6 +36,7 @@ those rates as national, three things needed checking:
   totals and practice → PCN / sub-ICB / ICB / region mapping)
 - **ODS `epraccur`**: the national register of GP practices and other prescribing cost
   centres, with columns named from the ODS reference catalogue
+- **OHID Fingertips, indicator 94240**: GP practice deprivation score (IMD 2025)
 
 Exact files, join keys, indicator definitions and open questions are in
 [`docs/sources.md`](docs/sources.md). Every downloaded file is fingerprinted (SHA-256,
@@ -46,9 +48,9 @@ Bronze → Silver → Gold
 
 | Layer | What it does | Output |
 |---|---|---|
-| Bronze | Verifies every file against the SHA-256 manifest, saves what each publication page said on the day, writes CSVs to Parquet **unchanged** (all values as text) with lineage columns | 28 Parquet files, 77,095,522 rows; 13 dated page snapshots |
+| Bronze | Verifies every file against the SHA-256 manifest, saves what each publication page said on the day, writes CSVs to Parquet **unchanged** (all values as text) with lineage columns | 29 Parquet files, 77,101,667 rows; 13 dated page snapshots |
 | Silver | Indicator definitions; the shared-phone-account rule; typed call files; practice participation for all 11 months; epraccur named from the ODS spec; published Table 1 / Table 2 parsed from every edition | Typed call tables, practice dimension, published-figure tables |
-| Gold | **Reconciliation gate** against NHS England's own August 2026 figures, then the analytical cuts | 7 CSVs in `data/gold/`, 4 charts in `docs/charts/` |
+| Gold | **Reconciliation gate** against NHS England's own August 2026 figures, then the analytical cuts | 10 CSVs in `data/gold/`, 5 charts in `docs/charts/` |
 
 ## Reconciliation Gate
 
@@ -75,6 +77,8 @@ Building the gate also turned up:
 | Bank holiday share of the published Monday figure | 70,616 of 2,037,943 |
 | Registered patients outside the data | 7.91m (12.5%), of whom **7.80m** are at practices that *agreed* to take part but whose data isn't published |
 | Patient coverage by region | 81.3% (North East and Yorkshire) to 94.1% (London) |
+| Patient coverage, most deprived fifth of practices (IMD 2025) | **83.4%**, against 86.5–90.7% for the other four fifths. Region doesn't explain it: given its regional mix it would be about 86.9% |
+| Calls per 1,000 patients per working weekday, most vs least deprived fifth | 28.7 vs 22.1 |
 | The 31.9% neither answered nor missed | 25.3% ended in the automated menu (IVR) + 6.6% callback requests |
 | IVR share by region | 23.7% (North East and Yorkshire) to 28.2% (South East) |
 | IVR share by practice (middle 80%) | 13.6% to 34.3%. Practice phone set-up, not just demand |
@@ -83,6 +87,13 @@ Building the gate also turned up:
 | Calls per 1,000 patients per working weekday | 27–28 from Oct 2025 to Jun 2026; 24.3–24.5 in Jul–Aug 2026 |
 
 ![Registered patients by practice status and region](docs/charts/coverage_by_region_2026-08.png)
+
+![Registered patients by practice status and deprivation quintile](docs/charts/coverage_by_deprivation_2026-08.png)
+
+The deprivation gap is about the **data**, not access. These are practices whose phone
+supplier isn't yet sending data to NHS England. But it means national headline rates
+under-represent the most deprived fifth of practices, mainly in the North West (−8.4
+points against less deprived practices in the same region) and the Midlands (−7.4).
 
 ![Outcomes of inbound calls by region](docs/charts/outcomes_by_region_2026-08.png)
 
@@ -100,6 +111,10 @@ Building the gate also turned up:
 - **Missed calls include voicemail**, which some practices use for prescription requests.
 - **The July–August dip** covers only one summer, so it can't yet be separated from
   seasonality.
+- **Practice deprivation scores** come from Fingertips indicator 94240, whose metadata
+  doesn't state the method. The usual approach (documented by NHS England) weights the
+  areas where a practice's patients live; that's assumed here but not confirmed for this
+  indicator.
 
 Full numbers behind every finding are in `notebooks/03_gold.ipynb` and `data/gold/*.csv`.
 
@@ -123,19 +138,19 @@ nhs-gp-cloud-telephony-pipeline/
 │   ├── 02_silver.ipynb
 │   └── 03_gold.ipynb
 ├── src/pipeline/
-│   ├── download_bronze.py      # downloads all sources + SHA-256 manifest
+│   ├── download_bronze.py      # downloads all sources + SHA-256 manifest (or named ones)
 │   ├── bronze_ingest.py
 │   ├── silver_build.py
 │   ├── gold_build.py
 │   └── gold_charts.py          # PNGs in docs/charts/, drawn from data/gold/
 ├── data/
-│   ├── bronze/                 # gitignored except Aug 2026, registered patients, ODS
+│   ├── bronze/                 # gitignored except Aug 2026, registered patients, ODS, Fingertips
 │   ├── silver/                 # gitignored — regenerate from the notebooks
 │   └── gold/                   # committed CSVs
 ├── evidence/
 │   ├── download_manifest_*.txt # SHA-256, URL and timestamp for every file
 │   ├── publication_pages/      # dated HTML snapshots + extracted caveat text
-│   ├── reference/              # ODS epraccur specification snapshot
+│   ├── reference/              # ODS spec, Fingertips metadata, practice-IMD method page
 │   ├── bronze_inventory.csv
 │   ├── silver_*.csv            # join, outcome-sum, duration-label and revision checks
 │   └── gold_reconciliation_2026-08.csv
@@ -165,7 +180,7 @@ python src/pipeline/gold_charts.py
 
 ## Data and Ethics
 
-Published, aggregate NHS England and ODS open data only. The publication contains no
+Published, aggregate NHS England, ODS and OHID open data only. The publication contains no
 patient-identifiable or clinical information. The data is practice-level and names
 practices, but this repo publishes no practice rankings or named-practice comparisons:
 NHS England warns that phone-system configuration differs between practices, so a league

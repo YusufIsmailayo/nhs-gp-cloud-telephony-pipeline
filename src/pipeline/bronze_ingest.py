@@ -42,8 +42,9 @@ def sha256_of(path: Path) -> str:
 
 
 def load_manifest() -> tuple[Path, pd.DataFrame]:
-    path = sorted(EVIDENCE_DIR.glob("download_manifest_*.txt"))[-1]
-    return path, pd.read_csv(path, sep="\t", dtype=str)
+    paths = sorted(EVIDENCE_DIR.glob("download_manifest_*.txt"))
+    rows = pd.concat([pd.read_csv(p, sep="\t", dtype=str) for p in paths], ignore_index=True)
+    return paths[-1], rows.drop_duplicates("path", keep="last").reset_index(drop=True)
 
 
 def verify_manifest(manifest: pd.DataFrame) -> pd.DataFrame:
@@ -68,7 +69,7 @@ def verify_manifest(manifest: pd.DataFrame) -> pd.DataFrame:
 
 MANIFEST_PATH, manifest = load_manifest()
 check = verify_manifest(manifest)
-print(f"Manifest: {MANIFEST_PATH.name} - {len(manifest)} files")
+print(f"Manifests: {len(sorted(EVIDENCE_DIR.glob('download_manifest_*.txt')))} file(s), latest {MANIFEST_PATH.name} - {len(manifest)} files")
 print(check["status"].value_counts().to_string())
 bad = check[check["status"].str.startswith("MISMATCH")]
 assert bad.empty, f"Stop: fingerprints don't match the manifest:\n{bad.to_string()}"
@@ -212,6 +213,20 @@ for csv_path in sorted((BRONZE_DIR / "ods").rglob("epraccur.csv")):
                       "source_columns": "|".join(names), "source_file": str(csv_path.relative_to(PROJECT_DIR)),
                       "source_sha256": sha, "members": 1})
     print(f"{csv_path.parent.name:<28} {table.num_rows:>8,} rows x {n_cols} cols")
+
+for csv_path in sorted((BRONZE_DIR / "fingertips").rglob("*.csv")):
+    raw = csv_path.read_bytes()
+    sha = sha_by_path[str(csv_path.relative_to(PROJECT_DIR))]
+    table = read_csv_as_text(raw)
+    assert table.num_rows == count_data_lines(raw), f"{csv_path.name}: row count mismatch"
+    table = with_lineage(table, _snapshot=csv_path.parent.name.rsplit("_", 1)[-1],
+                         _source_file=csv_path.name, _source_sha256=sha)
+    out = csv_path.with_suffix(".parquet")
+    pq.write_table(table, out, compression="zstd")
+    inventory.append({"bronze_file": str(out.relative_to(PROJECT_DIR)), "rows": table.num_rows,
+                      "source_columns": "|".join(c for c in table.column_names if not c.startswith("_")),
+                      "source_file": str(csv_path.relative_to(PROJECT_DIR)), "source_sha256": sha, "members": 1})
+    print(f"{csv_path.parent.name:<28} {table.num_rows:>8,} rows")
 
 inventory_df = pd.DataFrame(inventory)
 inventory_df.insert(0, "built_utc", datetime.now(timezone.utc).isoformat(timespec="seconds"))
