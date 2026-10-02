@@ -4,3 +4,4 @@ pyarrow
 beautifulsoup4
 openpyxl
 jupyterlab
+matplotlib
