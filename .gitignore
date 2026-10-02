@@ -1,0 +1,18 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Raw and derived data payloads stay out of git — regenerate by running the notebooks
+data/bronze/*
+!data/bronze/.gitkeep
+data/silver/*
+!data/silver/.gitkeep
+data/gold/*
+!data/gold/.gitkeep
+
+# evidence/ is deliberately NOT ignored: the dated publication-page snapshots are
+# committed with each Bronze load, because the coverage caveat moves month to month
