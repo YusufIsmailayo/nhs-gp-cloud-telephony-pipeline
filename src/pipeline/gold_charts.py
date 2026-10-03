@@ -261,11 +261,58 @@ def outcomes_by_region():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- 5. outcomes through the day
+def outcomes_by_time_band():
+    o = pd.read_csv(GOLD / f"outcomes_by_day_band_{MONTH}.csv", index_col=[0, 1])
+    bands = ["08:00-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:59", "16:00-17:59", "18:00-18:29"]
+    band_labels = ["08:00–10:00", "10:00–12:00", "12:00–14:00", "14:00–16:00", "16:00–18:00", "18:00–18:30"]
+    panels = [("Monday", "Ordinary Monday"), ("Tuesday-Friday", "Tuesday to Friday")]
+    segs = [("answered", "Answered by practice staff"), ("ended_in_ivr", "Ended in the automated menu (IVR)"),
+            ("callback_requested", "Callback requested"), ("missed", "Missed (incl. voicemail)")]
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 5.4), sharey=True)
+    fig.subplots_adjust(left=0.13, right=0.97, top=0.72, bottom=0.14, wspace=0.14)
+    y = np.arange(len(bands), dtype=float)
+    for ax, (day, heading) in zip(axes, panels):
+        d = o.loc[day].reindex(bands)
+        ax.set_xlim(0, 1.0)  # I fix the scale first, so the label-fit check measures the real bar widths
+        left = np.zeros(len(bands))
+        for (col, label), colour in zip(segs, SERIES):
+            ax.barh(y, d[col], left=left, height=0.62, color=colour, edgecolor=SURFACE, linewidth=2, label=label)
+            for i, (l0, v) in enumerate(zip(left, d[col])):
+                # I label every segment in the 8am row, and the answered share in every row
+                if i == 0 or col == "answered":
+                    text = f"{v:.1%}"
+                    # the 8am row carries the argument, so I allow its labels a tighter fit
+                    if fits(ax, text, v, pad_px=2 if i == 0 else 6):
+                        light_fill = colour in (SERIES[2], SERIES[3])
+                        ax.text(l0 + v / 2, y[i], text, ha="center", va="center", fontsize=9,
+                                color=INK if light_fill else "#ffffff",
+                                fontweight="semibold" if i == 0 else "normal")
+            left += d[col].values
+        ax.set_ylim(len(bands) - 0.5, -0.5)
+        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0%}"))
+        ax.set_title(heading, loc="left", fontsize=10, color=INK_2, pad=6)
+        quiet(ax, "x")
+    axes[0].set_yticks(y, band_labels)
+    axes[0].get_yticklabels()[0].set_fontweight("semibold")
+    axes[0].legend(loc="lower left", bbox_to_anchor=(0, 1.09), ncol=4, frameon=False, fontsize=9,
+                   handlelength=1, handleheight=1)
+    titles(fig, "At 8am the queue moves into callbacks and the menu, August 2026",
+           "Outcome of inbound calls by time of call, core hours. The missed share barely changes at 8am; the answered share falls.\n"
+           "Ordinary days only (the 31 Aug bank holiday excluded). Practices set up their phone systems differently.")
+    footer(fig, SOURCE.split(";")[0] + ". All calls incl. shared accounts; outcomes may not sum exactly to inbound "
+           "(largest band gap 0.05%).")
+    fig.savefig(OUT / "outcomes_by_time_band_2026-08.png", dpi=200)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     week_heatmap()
     coverage_by_region()
     coverage_by_deprivation()
     monthly_trend()
     outcomes_by_region()
+    outcomes_by_time_band()
     for p in sorted(OUT.glob("*.png")):
         print(f"{p.relative_to(REPO)}  ({p.stat().st_size / 1e3:.0f} KB)")

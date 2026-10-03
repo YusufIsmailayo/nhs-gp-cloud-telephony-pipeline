@@ -373,6 +373,28 @@ outcomes_imd.loc["No score", "calls_per_1000_patients_per_working_day"] = np.nan
 outcomes_imd.to_csv(GOLD_DIR / f"outcomes_by_deprivation_{MONTH}.csv")
 print((outcomes_imd).to_string())
 
+# I re-weight each fifth's observed call rate by its full registered population, to see how far
+# the coverage skew moves the national rate. This assumes the missing practices in each fifth
+# look like the included ones; shared-account calls and the no-score practices are left out.
+rate = outcomes_imd.loc[QUINTILES, "calls_per_1000_patients_per_working_day"]
+patients_in_data = q.loc[QUINTILES, "patients"]
+patients_all = pdim[pdim.imd_quintile.isin(QUINTILES)].groupby("imd_quintile").patients.sum().reindex(QUINTILES)
+reweighting = pd.DataFrame({
+    "calls_per_1000_patients_per_working_day": rate,
+    "share_of_patients_in_data": patients_in_data / patients_in_data.sum(),
+    "share_of_all_patients": patients_all / patients_all.sum(),
+})
+observed = (rate * patients_in_data).sum() / patients_in_data.sum()
+reweighted = (rate * patients_all).sum() / patients_all.sum()
+# the observed rate must equal calls over patients for the practices in the data
+assert abs(observed - q.loc[QUINTILES, "CBT001"].sum() / patients_in_data.sum() * 1000 / working_weekdays) < 1e-9
+reweighting.loc["All five fifths"] = [observed, 1.0, 1.0]
+reweighting.loc["All five fifths, re-weighted"] = [reweighted, np.nan, 1.0]
+print(f"Calls per 1,000 patients per working weekday: {observed:.2f} as observed, {reweighted:.2f} re-weighted "
+      f"to the full population of each fifth ({(reweighted / observed - 1):+.2%})")
+reweighting.to_csv(GOLD_DIR / f"deprivation_reweighted_rate_{MONTH}.csv")
+print(reweighting.to_string())
+
 OUTCOMES = {"CBT003": "answered", "CBT002": "ended_in_ivr", "CBT005": "callback_requested", "CBT004": "missed"}
 dd = durations[durations.indicator.isin(["CBT001", *OUTCOMES])]
 reg_names = practice_dim.drop_duplicates("region_code").set_index("region_code")["region_name"]
