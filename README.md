@@ -7,13 +7,22 @@ A Bronze → Silver → Gold medallion pipeline over NHS England's
 and the national practice register. That way coverage can be stated as a share of
 **patients**, not just practices.
 
+**Read the article:** [The 8am Rush Doesn't Show Up in the Missed-Call Rate](https://medium.com/@yusufismail_91982/the-8am-rush-doesnt-show-up-in-the-missed-call-rate-f360ef3ab7c8) (Medium, October 2026)
+
 **Key finding:** the headline "2,037,943 calls (7.5%) between 8am and 10am on Monday
 mornings" for August 2026 reproduces exactly, but it adds four ordinary Mondays to a bank
 holiday. On an ordinary Monday, 491,832 calls arrive between 08:00 and 10:00. That's
 **1.63×** the Tuesday–Friday average for the same two hours, and 28.7% of the whole day's
 calls.
 
+**And the missed-call rate barely shows the rush.** Between 08:00 and 10:00 on an ordinary
+Monday only 48.7% of calls are answered live: 25.7% end in the automated menu and 14.5%
+become callback requests. The missed share (11.1%) is lower than from 10:00 to 12:00
+(12.8%). The queue doesn't shrink at 8am; it moves into callbacks and the menu.
+
 ![Average inbound calls per hour by weekday and time band, August 2026](docs/charts/week_heatmap_2026-08.png)
+
+![Outcome of inbound calls by time band, ordinary Monday against Tuesday to Friday, August 2026](docs/charts/outcomes_by_time_band_2026-08.png)
 
 ## The Problem
 
@@ -33,7 +42,8 @@ those rates as national, three things needed checking:
   practice × day × time band (and × duration / wait-time bucket), plus each month's
   summary workbook and practice participation list
 - **NHS England, Patients Registered at a GP Practice**: 1 August 2026 snapshot (practice
-  totals and practice → PCN / sub-ICB / ICB / region mapping)
+  totals and practice → PCN / sub-ICB / ICB / region mapping). The 1 July and 1 September
+  lists are held only to test which list NHS England's published totals are built on
 - **ODS `epraccur`**: the national register of GP practices and other prescribing cost
   centres, with columns named from the ODS reference catalogue
 - **OHID Fingertips, indicator 94240**: GP practice deprivation score (IMD 2025)
@@ -50,7 +60,7 @@ Bronze → Silver → Gold
 |---|---|---|
 | Bronze | Verifies every file against the SHA-256 manifest, saves what each publication page said on the day, writes CSVs to Parquet **unchanged** (all values as text) with lineage columns | 29 Parquet files, 77,101,667 rows; 13 dated page snapshots |
 | Silver | Indicator definitions; the shared-phone-account rule; typed call files; practice participation for all 11 months; epraccur named from the ODS spec; published Table 1 / Table 2 parsed from every edition | Typed call tables, practice dimension, published-figure tables |
-| Gold | **Reconciliation gate** against NHS England's own August 2026 figures, then the analytical cuts | 10 CSVs in `data/gold/`, 5 charts in `docs/charts/` |
+| Gold | **Reconciliation gate** against NHS England's own August 2026 figures, then the analytical cuts | 12 CSVs in `data/gold/`, 6 charts in `docs/charts/` |
 
 ## Reconciliation Gate
 
@@ -60,9 +70,9 @@ pipeline. For August 2026, 49 published figures were checked
 
 | Status | Count | What it covers |
 |---|---|---|
-| Exact match | 43 | Practice counts and coverage; inbound calls; all four outcomes; callbacks; every wait-time band (any time, core hours, 8–10am); Table 4b counts; the Monday figure; all 310 date × time-band cells of Table 2 |
+| Match | 43 | Practice counts and coverage; inbound calls; all four outcomes; callbacks; every wait-time band (any time, core hours, 8–10am); Table 4b counts; the Monday figure; all 310 date × time-band cells of Table 2. Counts match exactly; percentages to the precision published |
 | Published label error | 4 | Call-duration percentages. The values are right but printed one row off from the January 2026 edition onward. The published "1 minute or less: 8.3%" is really the over-5-minutes share; the true figure is 22.8% |
-| Explained | 2 | Registered-patient totals, 0.03% short. The gap sits entirely in 42 practices with no 1 August list row, almost all services that hold no registered list (walk-in centres, extended-access hubs). Patient coverage still matches at published precision |
+| Explained | 2 | Registered-patient totals, 0.03% short. The gap sits in 42 practices with no 1 August list row, mostly services that hold no registered list (walk-in centres, extended-access hubs). Each call month's published totals match its own month's list most closely ([test](evidence/gold_patient_list_test_2026-08.csv)). Patient coverage still matches at published precision |
 
 Building the gate also turned up:
 - Table 1's "Calls answered" uses CBT007 (answered calls by duration), not CBT003 (by wait time). The two differ only in the three months where one practice disagrees.
@@ -75,16 +85,18 @@ Building the gate also turned up:
 |---|---|
 | Ordinary Monday, 08:00–10:00 | 491,832 calls: **1.63×** the Tue–Fri average; 28.7% of the day's calls |
 | Bank holiday share of the published Monday figure | 70,616 of 2,037,943 |
-| Registered patients outside the data | 7.91m (12.5%), of whom **7.80m** are at practices that *agreed* to take part but whose data isn't published |
+| Registered patients outside the data | 7.91m (12.5%, on the 1 August join), of whom **7.80m** are at practices that *agreed* to take part but whose data isn't published |
 | Patient coverage by region | 81.3% (North East and Yorkshire) to 94.1% (London) |
 | Patient coverage, most deprived fifth of practices (IMD 2025) | **83.4%**, against 86.5–90.7% for the other four fifths. Region explains only part of it: given its regional mix it would be about 86.9%, so 3.5 points of the 4.9-point gap remain, mostly in the North West and Midlands |
 | Calls per 1,000 patients per working weekday, most vs least deprived fifth | 28.7 vs 22.1 |
+| Effect of the deprivation coverage gap on the national rate | 24.49 → 24.58 calls per 1,000 patients per working weekday (+0.38%) if each fifth counted in proportion to its full population |
 | The 31.9% neither answered nor missed | 25.3% ended in the automated menu (IVR) + 6.6% callback requests |
+| Outcomes at 08:00–10:00, ordinary Monday | **48.7%** answered live, 25.7% ended in the menu, **14.5%** callback requests, 11.1% missed (10:00–12:00: 59.9%, 18.6%, 8.8%, 12.8%) |
 | IVR share by region | 23.7% (North East and Yorkshire) to 28.2% (South East) |
 | IVR share by practice (middle 80%) | 13.6% to 34.3%. Practice phone set-up, not just demand |
 | Calls from shared phone accounts | 1,749,178 (6.4%). Can't be split between practices; 91% can still be placed by region |
 | Practices whose outcomes sum exactly to inbound | 98% (Aug 2026), up from about 77% in Oct 2025 |
-| Calls per 1,000 patients per working weekday | 27–28 from Oct 2025 to Jun 2026; 24.3–24.5 in Jul–Aug 2026 |
+| Calls per 1,000 patients per working weekday | 26.8–28.3 from Oct 2025 to Jun 2026; 24.3–24.5 in Jul–Aug 2026 |
 
 ![Registered patients by practice status and region](docs/charts/coverage_by_region_2026-08.png)
 
@@ -93,7 +105,10 @@ Building the gate also turned up:
 The deprivation gap is about the **data**, not access. These are practices whose phone
 supplier isn't yet sending data to NHS England. But it means national headline rates
 under-represent the most deprived fifth of practices, mainly in the North West (−8.4
-points against less deprived practices in the same region) and the Midlands (−7.4).
+points against less deprived practices in the same region) and the Midlands (−7.4). Its
+effect on the national rate is small: re-weighting each fifth to its full population moves
+calls per 1,000 patients per working weekday from 24.49 to 24.58 (+0.38%). It changes whose
+experience the figures describe more than the rate itself.
 
 ![Outcomes of inbound calls by region](docs/charts/outcomes_by_region_2026-08.png)
 
